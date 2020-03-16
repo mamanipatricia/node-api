@@ -27,3 +27,16 @@ npm run dev
 npm i morgan
 ```
 
+### MongoDB
+
+Mongo Atlas = cloud database
+- it could be installed locally
+
+MongoDB Compass = local database
+- to connect to remote DB or local DB
+
+Installing mongoose:
+```
+npm i mongoose
+```
+
