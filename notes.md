@@ -21,3 +21,9 @@ npm run dev
 
 ![route Structure](./images/routesStructure.png)
 
+<!-- LOGGER -->
+- express.js  morgan middleware
+```
+npm i morgan
+```
+
