@@ -11,3 +11,13 @@ npm i express dotenv
 npm i -D nodemon
 ```
 
+----------
+To run de server:
+
+```
+npm run dev
+```
+### ROUTE STRUCTURE:
+
+![route Structure](./images/routesStructure.png)
+
