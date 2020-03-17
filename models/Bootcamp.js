@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const slugify = require('slugify')
+const geocoder = require('../utils/geocoder')
 
 const BootcampShema = new mongoose.Schema({
     name: {
@@ -35,37 +36,37 @@ const BootcampShema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add an address']
     },
-    // location: {
-    //     // GeoJSON Point
-    //     type: {
-    //         type: String,
-    //         enum: ['Point'],
-    //         required: true
-    //     },
-    //     coordinates: {
-    //         type: [Number],
-    //         required: true,
-    //         index: '2dsphere'
-    //     },
-    //     formattedAddress: String,
-    //     city: String,
-    //     state: String,
-    //     zipcode: String,
-    //     country: String,
-    // },
-    // careers: {
-    //     // Array of string
-    //     type: [String],
-    //     required: true,
-    //     enum: [
-    //         'Web Development',
-    //         'Mobile Development',
-    //         'UI/UX',
-    //         'Data Science',
-    //         'Bussiness',
-    //         'Other'
-    //     ]
-    // },
+    location: {
+        // GeoJSON Point
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+            index: '2dsphere'
+        },
+        formattedAddress: String,
+        city: String,
+        state: String,
+        zipcode: String,
+        country: String,
+    },
+    careers: {
+        // Array of string
+        type: [String],
+        required: true,
+        enum: [
+            'Web Development',
+            'Mobile Development',
+            'UI/UX',
+            'Data Science',
+            'Bussiness',
+            'Other'
+        ]
+    },
     averageRating: {
         type: Number,
         min: [1, 'Rating must be at least 1'],
@@ -100,9 +101,29 @@ const BootcampShema = new mongoose.Schema({
 })
 
 // Create bootcamp slug from he name
-BootcampShema.pre('save', function() {
+BootcampShema.pre('save', function (next) {
     console.log('Slugify ran', this.name)
-    this.slug = slugify(this.name, {lower: true})
+    this.slug = slugify(this.name, { lower: true })
     next()
 })
+
+// Geocode & create location field
+BootcampShema.pre('save', async function (next) {
+    const loc = await geocoder.geocoder(this.address)
+    this.location = {
+        type: 'Point',
+        coordinates: [loc[0].longitude, loc[0].latitude],
+        formattedAddress: loc[0].formattedAddress,
+        street: loc[0].streetName,
+        city: loc[0].city,
+        state: loc[0].stateCode,
+        zipcode: loc[0].zipcode,
+        country: loc[0].countryCode,
+    }
+
+    // Do not save address in DB
+    this.address = undefined
+    next()
+})
+
 module.exports = mongoose.model('Bootcamp', BootcampShema)
