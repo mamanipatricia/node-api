@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const logger = require('./middleware/logger')
 const morgan = require('morgan')
 const colors = require('colors')
+const errorHandler = require('./middleware/error')
 const connectDB = require('./config/db')
 
 // LOad env var
@@ -31,6 +32,10 @@ app.use(logger)
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps)
+
+// mddleware is executed in linera order, after the bootcamps.js
+app.use(errorHandler)
+
 
 const PORT = process.env.PORT || 5000
 
