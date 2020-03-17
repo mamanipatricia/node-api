@@ -72,3 +72,8 @@ Show all data from a collection:
 db.bootcamps.find().pretty()
 ```
 
+## SLUGIFY
+```
+npm i slugify
+```
+
